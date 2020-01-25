@@ -33,6 +33,7 @@ class ChatsController extends Controller
           $iam = Auth::user();
           $message = $iam->family->messages()->create([
             'message' => $request->input('message'),
+            'name' => Auth::user()->name,
             'id_user' => $iam->id
           ]);
 

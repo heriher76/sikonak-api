@@ -41,6 +41,9 @@ class User extends Authenticatable implements AuthenticatableContract, Authoriza
         'email_verified_at' => 'datetime',
     ];
 
+    //Fix no role named blabla
+    protected $guard_name = 'api';
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *

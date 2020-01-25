@@ -33,7 +33,7 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-          //validate incoming request
+        //validate incoming request
         $this->validate($request, [
             'email' => 'required|string',
             'password' => 'required|string',
@@ -79,16 +79,24 @@ class AuthController extends Controller
 
             $user->assignRole('parent');
 
+            //test
+            $user->id_family = 4;
+
             // ($request->file('photo') != null) ? $namaPhoto = Str::random(32).'.'.$request->file('photo')->getClientOriginalExtension() : $namaPhoto = null;
             //
             // $user->photo = $namaPhoto;
             //
             // ($request->file('photo') != null) ? $request->file('photo')->move(base_path().('/public/photo-profile'), $namaPhoto) : null;
-
             $user->save();
 
+            $credentials = $request->only(['email', 'password']);
+
+            if (! $token = Auth::attempt($credentials)) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+
             //return successful response
-            return response()->json(['user' => $user, 'message' => 'Berhasil Register!'], 201);
+            return response()->json(['user' => $user, 'token' => 'Bearer '.$token, 'message' => 'Berhasil Register!'], 201);
 
         } catch (\Exception $e) {
             //return error message
