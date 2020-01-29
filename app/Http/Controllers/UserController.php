@@ -160,4 +160,25 @@ class UserController extends Controller
             return response()->json(['message' => 'You Have Entered Wrong Password!'], 409);
         }
     }
+    public function storeGCMToken(Request $request)
+    {
+      //validate incoming request
+      $this->validate($request, [
+          'gcmtoken' => 'string'
+      ]);
+
+      try {
+          $iam = Auth::user();
+
+          $iam->update([
+            'gcmtoken' => $request->input('gcmtoken')
+          ]);
+
+          //return successful response
+          return response()->json(['GCM Token' => $request->input('gcmtoken'), 'message' => 'GCM Token Stored Succesfully'], 200);
+      } catch (\Exception $e) {
+          //return error message
+          return response()->json(['message' => 'Store GCM Token Failed!'], 409);
+      }
+    }
 }

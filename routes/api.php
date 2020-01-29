@@ -24,9 +24,11 @@ Route::group(['middleware' => 'auth'], function () use ($router) {
   Route::put('profile/edit', 'UserController@editProfile');
   Route::put('profile/photo', 'UserController@editPhoto');
   Route::put('profile/password', 'UserController@editPassword');
+  //GCM TOKEN
+  Route::put('users/storegcmtoken', 'UserController@storeGCMToken');
   //GET USER
-  Route::get('users/{id}', 'UserController@singleUser');
   Route::get('users', 'UserController@allUsers');
+  Route::get('users/{id}', 'UserController@singleUser');
   //EVENT
   Route::get('event', 'EventController@index');
   Route::post('event/create', 'EventController@store');

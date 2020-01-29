@@ -20,7 +20,7 @@ class User extends Authenticatable implements AuthenticatableContract, Authoriza
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'hp', 'status', 'address', 'photo', 'id_family'
+        'name', 'email', 'hp', 'status', 'address', 'photo', 'id_family', 'gcmtoken'
     ];
 
     /**

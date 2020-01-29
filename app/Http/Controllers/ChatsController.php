@@ -29,28 +29,67 @@ class ChatsController extends Controller
           'message' => 'required|string'
       ]);
 
+      $iam = Auth::user();
+      $pushdata['title'] = $iam->name;
+      $pushdata['message'] = $request->input('message');
+      $pushdata['id'] = $iam->id;
+
+      $registration_ids = $this->getRegistrationId();
+
+      $fields = array(
+          'registration_ids' => $registration_ids,
+          'data' => $pushdata,
+      );
+
+      $pushNotif = $this->sendPushNotification($fields);
+dd($pushNotif);
       try {
-          $iam = Auth::user();
           $message = $iam->family->messages()->create([
             'message' => $request->input('message'),
             'name' => Auth::user()->name,
             'id_user' => $iam->id
           ]);
 
-          $app_id = env('PUSHER_APP_ID');
-          $app_key = env('PUSHER_APP_KEY');
-          $app_secret = env('PUSHER_APP_SECRET');
-          $app_cluster = env('PUSHER_APP_CLUSTER');
-
-          //Want to be real time?
-          $pusher = new \Pusher\Pusher( $app_key, $app_secret, $app_id, array('cluster' => $app_cluster) );
-          $pusher->trigger( 'family-chat-'.$iam->family->id, 'MessageSent', $message );
-
           //return successful response
-          return response()->json(['messages' => $request->all(), 'message' => 'Send Message Succesfully'], 200);
-      } catch (\Exception $e) {dd($e);
+          return response()->json(['messages' => $message, 'message' => 'Send Message Succesfully'], 200);
+      } catch (\Exception $e) {printf($e);
           //return error message
           return response()->json(['message' => 'Send Message Failed!'], 409);
       }
+  }
+
+  private function getRegistrationId()
+  {
+      $iam = Auth::user();
+      $myFamilyTokens = $iam->family->users->where('id', '!=', $iam->id)->pluck('gcmtoken');
+
+      return $myFamilyTokens;
+  }
+
+  private function sendPushNotification($fields){
+      $url = 'https://fcm.googleapis.com/fcm/send';
+
+      $headers = array(
+          'Authorization: key=' . env('GOOGLE_FIREBASE_API_KEY', null),
+          'Content-Type: application/json'
+      );
+
+      $ch = curl_init();
+
+      curl_setopt($ch, CURLOPT_URL, $url);
+      curl_setopt($ch, CURLOPT_POST, true);
+      curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+
+      $result = curl_exec($ch);
+      if ($result === FALSE) {
+          die('Curl failed: ' . curl_error($ch));
+      }
+      curl_close($ch);
+
+      return $result;
   }
 }
