@@ -81,6 +81,16 @@ class User extends Authenticatable implements AuthenticatableContract, Authoriza
 
     public function messages()
     {
-      return $this->hasMany('App\Message', 'id_user');
+        return $this->hasMany('App\Message', 'id_user');
+    }
+
+    public function logger()
+    {
+        return $this->hasOne('App\Logger', 'id_user');
+    }
+
+    public function timer()
+    {
+        return $this->hasOne('App\Timer', 'id_user');
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\User;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -160,6 +161,7 @@ class UserController extends Controller
             return response()->json(['message' => 'You Have Entered Wrong Password!'], 409);
         }
     }
+
     public function storeGCMToken(Request $request)
     {
       //validate incoming request
@@ -180,5 +182,25 @@ class UserController extends Controller
           //return error message
           return response()->json(['message' => 'Store GCM Token Failed!'], 409);
       }
+    }
+
+    public function updateStatus(Request $request, $id)
+    {dd(Carbon::now()->toDateTimeString());
+      //validate incoming request
+      $this->validate($request, [
+          'status' => 'boolean'
+      ]);
+
+      return $request->all();
+    }
+
+    public function updateTimer(Request $request, $id)
+    {
+      //validate incoming request
+      $this->validate($request, [
+          'until' => 'date_format:H:i:s'
+      ]);
+
+      return $request->all();
     }
 }

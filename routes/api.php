@@ -17,6 +17,9 @@ Route::group(['middleware' => ['auth', 'role:parent']], function () use ($router
   Route::post('register-child', 'AuthController@registerChild');
   Route::post('family/create', 'FamilyController@store');
   Route::put('family/update', 'FamilyController@update');
+  //STATUS
+  Route::put('users/status/{id}', 'UserController@updateStatus');
+  Route::put('users/timer/{id}', 'UserController@updateTimer');
 });
 Route::group(['middleware' => 'auth'], function () use ($router) {
   //PROFILE
