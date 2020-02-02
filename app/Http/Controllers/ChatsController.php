@@ -42,7 +42,7 @@ class ChatsController extends Controller
       );
 
       $pushNotif = $this->sendPushNotification($fields);
-dd($pushNotif);
+
       try {
           $message = $iam->family->messages()->create([
             'message' => $request->input('message'),
